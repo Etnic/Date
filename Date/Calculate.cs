@@ -21,9 +21,22 @@ namespace Date
             }
             else
             {
+                
+
+
                 var weekends = GetDates(date, date.AddDays(days));
                 
                 var bankHolidays = GetHolidayDaysBetweenDate(date, days, Calculate.GetHolidays(new List<int>() { 2019, 2020 }));
+                
+                for (int i = 1; i <= days; i++)
+                {
+                    if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date))
+                    {
+                        days++;
+                    }
+
+                      date =  date.AddDays(1);
+                }
 
                 var dateCounted = date.AddDays(days + weekends.Count() + bankHolidays.Count());
 
