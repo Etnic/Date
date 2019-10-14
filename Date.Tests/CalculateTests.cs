@@ -124,5 +124,17 @@ namespace Date.Tests
 
             Assert.Equal(expectedDate, result);
         }
+
+        [Fact]
+        public void CalculateTests_WorkingDays_GetCorrectDate9()
+        {
+            var expectedDate = new DateTime(2020, 4, 20);
+            var inputDate = new DateTime(2020, 4, 4);
+            var days = 9;
+
+            var result = Calculate.CalculateDate(inputDate, days, WorkOrCalendarDay.WorkingDay);
+
+            Assert.Equal(expectedDate, result);
+        }
     }
 }

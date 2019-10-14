@@ -20,9 +20,9 @@ namespace Date
             }
             else
             {
-                var bankHolidays = GetHolidays(new List<int>() { 2019, 2020 });
+                var bankHolidays = GetHolidays(new List<int>() { 2019, 2020, 2021 });
 
-                date = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date) ? calc(date, days - 1, bankHolidays) : calc(date, days, bankHolidays);
+                date = IsWeekendOrBankholiday(date, bankHolidays) ? calc(date, days - 1, bankHolidays) : calc(date, days, bankHolidays);
                 
                 switch (date.DayOfWeek)
                 {
@@ -98,7 +98,7 @@ namespace Date
         {
             for (int i = 0; i < days; i++)
             {
-                if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date))
+                if (IsWeekendOrBankholiday(date, bankHolidays))
                 {
                     days++;
                 }
@@ -112,6 +112,11 @@ namespace Date
             }
 
             return date;
+        }
+
+        private static bool IsWeekendOrBankholiday(DateTime date, List<DateTime> bankHolidays)
+        {
+            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date);
         }
     }
 }
