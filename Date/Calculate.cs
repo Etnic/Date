@@ -20,12 +20,7 @@ namespace Date
                 return date.AddDays(days).Date;
             }
             else
-            {
-                
-
-
-                var weekends = GetDates(date, date.AddDays(days));
-                
+            {   
                 var bankHolidays = GetHolidayDaysBetweenDate(date, days, Calculate.GetHolidays(new List<int>() { 2019, 2020 }));
                 
                 for (int i = 1; i <= days; i++)
@@ -36,46 +31,24 @@ namespace Date
                     }
 
                       date =  date.AddDays(1);
-                }
+                }              
 
-                var dateCounted = date.AddDays(days + weekends.Count() + bankHolidays.Count());
+                var finalDate = date;
 
-                var finalDate = dateCounted;
-
-                switch (dateCounted.DayOfWeek)
+                switch (date.DayOfWeek)
                 {
                     case DayOfWeek.Saturday:
-                        finalDate = dateCounted.AddDays(2);
+                        finalDate = date.AddDays(2);
                         break;
 
                     case DayOfWeek.Sunday:
-                        finalDate = dateCounted.AddDays(1);
+                        finalDate = date.AddDays(1);
                         break;
                     default:
                         break;
                 }
 
                 return finalDate;
-            }
-        }
-                
-        static public List<string> GetDates(DateTime start_date, DateTime end_date)
-        {
-            List<string> days_list = new List<string>();
-            for (DateTime date = start_date; date <= end_date; date = date.AddDays(1))
-            {
-                if (date.DayOfWeek == DayOfWeek.Sunday || date.DayOfWeek == DayOfWeek.Saturday)
-                    days_list.Add(date.ToShortDateString());
-            }
-
-            return days_list;
-        }
-
-            static IEnumerable<DateTime> GetDaysBetween(DateTime start, DateTime end)
-        {
-            for (DateTime i = start; i < end; i = i.AddDays(1))
-            {                
-                yield return i;
             }
         }
         
