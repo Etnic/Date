@@ -40,7 +40,19 @@ namespace Date
 
                 return date;
             }
-        }        
+        }
+
+        public static bool IsWorkingDay(DateTime date)
+        {
+            var bankHolidays = GetHolidays(new List<int>() { 2019, 2020, 2021 });
+
+            return !IsWeekendOrBankholiday(date, bankHolidays);           
+        }
+
+        private static bool IsWeekendOrBankholiday(DateTime date, List<DateTime> bankHolidays)
+        {
+            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date);
+        }
 
         private static List<DateTime> GetHolidays(IEnumerable<int> years)
         {
@@ -112,11 +124,6 @@ namespace Date
             }
 
             return date;
-        }
-
-        private static bool IsWeekendOrBankholiday(DateTime date, List<DateTime> bankHolidays)
-        {
-            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date);
-        }
+        }        
     }
 }
