@@ -29,7 +29,7 @@ namespace Date
 
                 var bankHolidays = cache.SelectMany(d => d.Value).ToList();
 
-                date = IsWeekendOrBankholiday(date, bankHolidays) ? calc(date, days - 1, bankHolidays) : calc(date, days, bankHolidays);
+                date = IsWeekendOrBankholiday(date, bankHolidays) ? Calc(date, days - 1, bankHolidays) : Calc(date, days, bankHolidays);
 
                 return date;
             }
@@ -112,9 +112,8 @@ namespace Date
         }
 
         // If first day is weekend or holiday decrease days by one
-        private static DateTime calc(DateTime date, int days, List<DateTime> bankHolidays)
+        private static DateTime Calc(DateTime date, int days, List<DateTime> bankHolidays)
         {
-
             for (int i = 0; i < days; i++)
             {
                 if (IsWeekendOrBankholiday(date, bankHolidays))
@@ -128,7 +127,6 @@ namespace Date
             date = CheckLastDay(date, bankHolidays);
             date = CheckLastDay(date, bankHolidays);
             date = CheckLastDay(date, bankHolidays);
-
 
             return date;
         }
