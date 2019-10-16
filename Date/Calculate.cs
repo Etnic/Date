@@ -20,23 +20,9 @@ namespace Date
             }
             else
             {
-                var bankHolidays = GetHolidays(new List<int>() { 2019, 2020, 2021 });
+                var bankHolidays = GetHolidays(2022);
 
-                date = IsWeekendOrBankholiday(date, bankHolidays) ? calc(date, days - 1, bankHolidays) : calc(date, days, bankHolidays);
-                
-                switch (date.DayOfWeek)
-                {
-                    case DayOfWeek.Saturday:
-                        date = date.AddDays(2);
-                        break;
-
-                    case DayOfWeek.Sunday:
-                        date = date.AddDays(1);
-                        break;
-
-                    default:
-                        break;
-                }
+                date = IsWeekendOrBankholiday(date, bankHolidays) ? calc(date, days - 1, bankHolidays) : calc(date, days, bankHolidays);               
 
                 return date;
             }
@@ -44,9 +30,9 @@ namespace Date
 
         public static bool IsWorkingDay(DateTime date)
         {
-            var bankHolidays = GetHolidays(new List<int>() { 2019, 2020, 2021 });
+            var bankHolidays = GetHolidays(2022);
 
-            return !IsWeekendOrBankholiday(date, bankHolidays);           
+            return !IsWeekendOrBankholiday(date, bankHolidays);
         }
 
         private static bool IsWeekendOrBankholiday(DateTime date, List<DateTime> bankHolidays)
@@ -54,32 +40,41 @@ namespace Date
             return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date);
         }
 
-        private static List<DateTime> GetHolidays(IEnumerable<int> years)
+        private static List<DateTime> GetHolidays(int finalYear)
         {
+            var time = DateTime.Now;
+            var year = time.Year;
+            var years = new List<int>();
+
+            for (int i = year; i <= finalYear; i++)
+            {
+                years.Add(i);
+            }
+
             var listOfHolidays = new List<DateTime>();
 
-            foreach (var year in years.Distinct())
+            foreach (var item in years.Distinct())
             {
                 listOfHolidays.AddRange(new[] {
-                new DateTime(year, 1, 1),
-                new DateTime(year, 1, 6),
-                new DateTime(year, 4, 19),
-                new DateTime(year, 4, 22),
-                new DateTime(year, 5, 1),
-                new DateTime(year, 5, 8),
-                new DateTime(year, 7, 5),
-                new DateTime(year, 7, 5),
-                new DateTime(year, 8, 29),
-                new DateTime(year, 9, 1),
-                new DateTime(year, 9, 15),
-                new DateTime(year, 11, 1),
-                new DateTime(year, 11, 17),
-                new DateTime(year, 12, 24),
-                new DateTime(year, 12, 25),
-                new DateTime(year, 12, 26)
+                new DateTime(item, 1, 1),
+                new DateTime(item, 1, 6),
+                new DateTime(item, 4, 19),
+                new DateTime(item, 4, 22),
+                new DateTime(item, 5, 1),
+                new DateTime(item, 5, 8),
+                new DateTime(item, 7, 5),
+                new DateTime(item, 7, 5),
+                new DateTime(item, 8, 29),
+                new DateTime(item, 9, 1),
+                new DateTime(item, 9, 15),
+                new DateTime(item, 11, 1),
+                new DateTime(item, 11, 17),
+                new DateTime(item, 12, 24),
+                new DateTime(item, 12, 25),
+                new DateTime(item, 12, 26)
             });
 
-                var easterDate = GetEasterSunday(year);
+                var easterDate = GetEasterSunday(item);
                 listOfHolidays.Add(easterDate.AddDays(-2));
                 listOfHolidays.Add(easterDate.AddDays(1));
             }
@@ -118,12 +113,35 @@ namespace Date
                 date = date.AddDays(1);
             }
 
+            date = CheckLastDay(date, bankHolidays);
+            date = CheckLastDay(date, bankHolidays);
+            date = CheckLastDay(date, bankHolidays);
+
+            return date;
+        }
+
+        private static DateTime CheckLastDay(DateTime date, List<DateTime> bankHolidays)
+        {
+            switch (date.DayOfWeek)
+            {
+                case DayOfWeek.Saturday:
+                    date = date.AddDays(2);
+                    break;
+
+                case DayOfWeek.Sunday:
+                    date = date.AddDays(1);
+                    break;
+
+                default:
+                    break;
+            }
+
             while (bankHolidays.Contains(date))
             {
                 date = date.AddDays(1);
             }
 
             return date;
-        }        
+        }       
     }
 }

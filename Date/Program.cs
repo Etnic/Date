@@ -8,7 +8,7 @@ namespace Date
         static void Main(string[] args)
         {
             var day = new DateTime(2019, 12, 28);
-            var date = Calculate.CalculateDate(new DateTime(2019,12,14), 15, WorkOrCalendarDay.WorkingDay);
+            var date = Calculate.CalculateDate(new DateTime(2022,08,26), 1, WorkOrCalendarDay.WorkingDay);
             var isWorkingDay = Calculate.IsWorkingDay(day);
 
             Console.WriteLine(date);
