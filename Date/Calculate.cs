@@ -12,6 +12,8 @@ namespace Date
 
     public static class Calculate
     {
+        private readonly static Dictionary<int, List<DateTime>> cache = new Dictionary<int, List<DateTime>>();
+
         public static DateTime CalculateDate(DateTime date, int days, WorkOrCalendarDay workOrCalendarDay)
         {
             if (workOrCalendarDay == WorkOrCalendarDay.CalendarDay)
@@ -20,9 +22,14 @@ namespace Date
             }
             else
             {
-                var bankHolidays = GetHolidays(2022);
+                if (!cache.ContainsKey(date.Year))
+                {
+                    GetHolidays(date, days);
+                }
 
-                date = IsWeekendOrBankholiday(date, bankHolidays) ? calc(date, days - 1, bankHolidays) : calc(date, days, bankHolidays);               
+                var bankHolidays = cache.SelectMany(d => d.Value).ToList();
+
+                date = IsWeekendOrBankholiday(date, bankHolidays) ? calc(date, days - 1, bankHolidays) : calc(date, days, bankHolidays);
 
                 return date;
             }
@@ -30,7 +37,12 @@ namespace Date
 
         public static bool IsWorkingDay(DateTime date)
         {
-            var bankHolidays = GetHolidays(2022);
+            if (!cache.ContainsKey(date.Year))
+            {
+                GetHolidays(date, 0);
+            }
+
+            var bankHolidays = cache.SelectMany(d => d.Value).ToList();
 
             return !IsWeekendOrBankholiday(date, bankHolidays);
         }
@@ -40,13 +52,13 @@ namespace Date
             return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday || bankHolidays.Contains(date);
         }
 
-        private static List<DateTime> GetHolidays(int finalYear)
+        private static void GetHolidays(DateTime year, int days)
         {
-            var time = DateTime.Now;
-            var year = time.Year;
             var years = new List<int>();
+            var bankHolidays = new List<DateTime>();
+            var finalYear = year.AddDays(days * 2).Year;
 
-            for (int i = year; i <= finalYear; i++)
+            for (int i = year.Year; i <= finalYear; i++)
             {
                 years.Add(i);
             }
@@ -77,9 +89,8 @@ namespace Date
                 var easterDate = GetEasterSunday(item);
                 listOfHolidays.Add(easterDate.AddDays(-2));
                 listOfHolidays.Add(easterDate.AddDays(1));
+                cache.Add(item, listOfHolidays);
             }
-
-            return listOfHolidays;
         }
 
         private static DateTime GetEasterSunday(int year)
@@ -103,6 +114,7 @@ namespace Date
         // If first day is weekend or holiday decrease days by one
         private static DateTime calc(DateTime date, int days, List<DateTime> bankHolidays)
         {
+
             for (int i = 0; i < days; i++)
             {
                 if (IsWeekendOrBankholiday(date, bankHolidays))
@@ -116,6 +128,7 @@ namespace Date
             date = CheckLastDay(date, bankHolidays);
             date = CheckLastDay(date, bankHolidays);
             date = CheckLastDay(date, bankHolidays);
+
 
             return date;
         }
@@ -142,6 +155,6 @@ namespace Date
             }
 
             return date;
-        }       
+        }
     }
 }
